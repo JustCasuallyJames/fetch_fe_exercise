@@ -1,7 +1,7 @@
 "use client";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Link from "next/link";
-import Login from "@/app/Login/page";
+
+import Login from "@/app/components/Login.js";
 
 export default function Home() {
   return (

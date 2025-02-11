@@ -1,15 +1,17 @@
 "use client";
 import { useState } from 'react';
 
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
-import { Container } from 'react-bootstrap';
+import Link from "next/link";
+import { useRouter } from 'next/navigation'
+
+import { Button, Form, Container, Alert } from 'react-bootstrap';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,8 +35,8 @@ export default function Login() {
         console.log("successfully logged in")
       }
 
-      // On successful login, handle the response
-      // window.location.href = '/homepage'; // Redirect after successful login
+      localStorage.setItem('name', name); // Save the Name from initial login
+      router.push('/home'); // Redirect after successful login
     } catch (error) {
       setError('Login failed. Please try again.');
       console.error('Error during login:', error);
