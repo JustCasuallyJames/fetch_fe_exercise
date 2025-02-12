@@ -1,11 +1,11 @@
-import { Card, Button } from 'react-bootstrap';
+import { Button, Card } from 'react-bootstrap';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 export default function DogCard({id, name, age, breed, image, zip_code, city, county, state, matchToggle}) {
   const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {
-    const storedFavorites = JSON.parse(localStorage.getItem("favorites")) || [];
+    const storedFavorites = JSON.parse(window.localStorage.getItem("favorites")) || [];
     setIsFavorite(storedFavorites.some((dog) => dog.id === id));
   }, [id]);
 
@@ -22,7 +22,7 @@ export default function DogCard({id, name, age, breed, image, zip_code, city, co
     }
 
     // Update localStorage and state
-    localStorage.setItem("favorites", JSON.stringify(storedFavorites));
+    window.localStorage.setItem("favorites", JSON.stringify(storedFavorites));
     setIsFavorite(!isFavorite);
   };
   return (

@@ -1,24 +1,24 @@
 "use client";
-import { useState, useMemo, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { useEffect, useMemo, useState } from "react";
 
+import { useRouter } from "next/navigation";
 import {
   Button,
-  Container,
   Col,
-  Row,
+  Container,
   Dropdown,
   DropdownButton,
   FormCheck,
-  Pagination
+  Pagination,
+  Row
 } from "react-bootstrap";
-import { useRouter } from "next/navigation";
 
 import DogCard from "@/app/components/Card";
 import NavigationBar from "../components/NavigationBar";
 
 export default function Homepage() {
-  const NAME = localStorage.getItem("name"); // Get name from local storage
+  const NAME = window.localStorage.getItem("name"); // Get name from local storage
   const URL = "https://frontend-take-home-service.fetch.com";
   const router = useRouter();
 
@@ -85,7 +85,7 @@ export default function Homepage() {
   };
 
   const handleLogout = async () => {
-    if (localStorage.getItem("name")) {
+    if (window.localStorage.getItem("name")) {
       // if there is a name to be removed
       const response = await fetch(
         "https://frontend-take-home-service.fetch.com/auth/logout",
@@ -102,7 +102,7 @@ export default function Homepage() {
         console.log("Cannot log out");
       } else {
         console.log("Logged out successfully");
-        localStorage.removeItem("name"); // Remove name from local storage
+        window.localStorage.removeItem("name"); // Remove name from local storage
       }
     }
     // since there is no name to be removed, just redirect.

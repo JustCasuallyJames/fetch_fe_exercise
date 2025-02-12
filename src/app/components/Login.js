@@ -2,9 +2,9 @@
 import { useState } from 'react';
 
 import Link from "next/link";
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation';
 
-import { Button, Form, Container, Alert, Image } from 'react-bootstrap';
+import { Alert, Button, Container, Form, Image } from 'react-bootstrap';
 
 import fetch_logo from '../../assets/fetch_logo.png';
 
@@ -37,7 +37,7 @@ export default function Login() {
         console.log("successfully logged in")
       }
 
-      localStorage.setItem('name', name); // Save the Name from initial login
+      window.localStorage.setItem('name', name); // Save the Name from initial login
       router.push('/home'); // Redirect after successful login
     } catch (error) {
       setError('Login failed. Please try again.');

@@ -1,17 +1,17 @@
 'use client';
-import { useState, useEffect } from "react";
 import DogCard from "@/app/components/Card";
 import NavigationBar from '@/app/components/NavigationBar';
 import "bootstrap/dist/css/bootstrap.min.css";
+import { useEffect, useState } from "react";
 
-import { Row, Col, Button, Container } from 'react-bootstrap';
+import { Button, Col, Container, Row } from 'react-bootstrap';
 export default function Favorites() {
   const [favorites, setFavorites] = useState([]);
   const [favoriteDog, setFavoriteDog] = useState({});
   const [matchToggle, setMatchToggle] = useState(false);
-  // Load favorites from localStorage when the page loads
+  // Load favorites from window.localStorage when the page loads
   useEffect(() => {
-    const storedFavorites = JSON.parse(localStorage.getItem("favorites")) || [];
+    const storedFavorites = JSON.parse(window.localStorage.getItem("favorites")) || [];
     setFavorites(storedFavorites);
   }, []);
 
