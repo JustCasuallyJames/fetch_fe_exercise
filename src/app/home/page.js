@@ -39,6 +39,7 @@ export default function Homepage() {
   const [totalSize, setTotalSize] = useState(10000);
   const totalPages = Math.ceil(totalSize / size);
 
+  const [locations, setLocations] = useState({});
   // Get breeds for the current page
   // const indexOfLastBreed = currentPage * size;
   // const indexOfFirstBreed = indexOfLastBreed - size;
@@ -46,6 +47,7 @@ export default function Homepage() {
 
   // Handle page changes
   const goToPage = async (page, toggle="") => {
+    console.log("entered into PAGE filter useEffect")
     if (page >= 1 && page <= totalPages) {
       console.log("totalPages", totalPages)
       setCurrentPage(page);
@@ -170,6 +172,32 @@ export default function Homepage() {
     fetchDogs();
   }, [selectedBreed, zipCodes, ageMin, ageMax, size, sort]); // Runs when filters change
 
+  const fetchDogLocations = async (dogZipcodes) => {
+    if (!dogZipcodes || dogZipcodes.length === 0) return;
+
+    const response = await fetch(`${URL}/locations`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(dogZipcodes),
+      credentials: "include",
+    })
+    const resData = await response.json();
+    const locationDictionary = resData.reduce((acc, location) => {
+      acc[location.zip_code] = location;
+      return acc;
+    }, {});
+    setLocations(locationDictionary);
+  }
+
+  useEffect(() => {
+    if (dogs.length > 0) {
+      const dogZipcodes = [...new Set(dogs.map(dog => dog.zip_code))]; // Unique zip codes only
+      fetchDogLocations(dogZipcodes);
+    }
+  }, [dogs]); 
+  
   return (
     <Container>
       {/* Breed Selection */}
@@ -253,13 +281,17 @@ export default function Homepage() {
       <Row>
         {dogs.map((dog) => (
           <Col xs={12} sm={6} md={4} key={dog.id}>
+            {/* {console.log("locations:",locations)} */}
             <DogCard
               name={dog.name}
               age={dog.age}
               breed={dog.breed}
               image={dog.img}
               zip_code={dog.zip_code}
-            />
+              city={locations[dog.zip_code] ? locations[dog.zip_code].city : "Unknown"}
+              county={locations[dog.zip_code] ? locations[dog.zip_code].county : "Unknown"}
+              state={locations[dog.zip_code] ? locations[dog.zip_code].state : "Unknown"}
+              />
           </Col>
         ))}
       </Row>
