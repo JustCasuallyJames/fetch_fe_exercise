@@ -71,7 +71,7 @@ export default function Favorites() {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            background: "#F8A619", // Light gray background
+            background: "#F8A619", // Yellowish background
             padding: "20px",
             borderRadius: "10px",
             marginTop: "20px",

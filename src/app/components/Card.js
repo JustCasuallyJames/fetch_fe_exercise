@@ -43,7 +43,7 @@ export default function DogCard({id, name, age, breed, image, zip_code, city, co
         </Card.Text>
         {matchToggle ?         
           '' : 
-          <Button variant="primary" onClick={toggleFavorite}>
+          <Button variant={isFavorite ? "danger" : "primary"} onClick={toggleFavorite}>
             {isFavorite ? "Remove from Favorites" : "Add to Favorites"}
           </Button> 
         }

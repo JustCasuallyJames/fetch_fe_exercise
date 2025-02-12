@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
+  --background: #403F41;
   --foreground: #171717;
 }
 
@@ -38,8 +38,20 @@ body {
 .navbar-links {
   padding-left: 0 !important;
   font-size: 20px !important;
+  color: black !important;
 }
 
 .dog-finder-title {
   font: bold 20px;
+}
+
+.custom-dropdown {
+  background-color: #F8A619 !important;
+  border-color: #F8A619 !important;
+  color: white !important; /* Set text color to white */
+}
+
+.custom-dropdown:hover {
+  background-color: #D88A14 !important; /* Darker shade on hover */
+  border-color: #D88A14 !important;
 }

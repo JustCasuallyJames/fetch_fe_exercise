@@ -39,7 +39,7 @@ export default function NavigationBar() {
           <Nav className="w-100 d-flex">
             <Nav.Link href="/home" className="navbar-links">Home</Nav.Link>
             <Nav.Link href="/favorites" className="navbar-links ms-auto">Favorites</Nav.Link>
-            <Button onClick={handleLogout}>Logout</Button>
+            <Button onClick={handleLogout} className="custom-dropdown">Logout</Button>
           </Nav>
         </Navbar.Collapse>
       </Container>

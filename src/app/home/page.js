@@ -30,7 +30,7 @@ export default function Homepage() {
   const [zipCodes, setZipCodes] = useState([]);
   const [ageMin, setAgeMin] = useState("");
   const [ageMax, setAgeMax] = useState("");
-  const [size, setSize] = useState(9); // Breeds per page
+  const [size, setSize] = useState(12); // Breeds per page
   const [sort, setSort] = useState("breed:asc"); // breed:asc | breed:desc or name:asc | name:desc or age:asc | age:desc
 
   // pagination
@@ -200,112 +200,129 @@ export default function Homepage() {
   }, [dogs]); 
   
   return (
-    <Container className="homepage-container">
-      <NavigationBar/>
-      {/* Breed Selection */}
-      <Row className="">
-        <Col>
-          {NAME === "" || NAME === null ? (
-            <h1>
-              You've been logged out already, please press the logout button.
-            </h1>
-          ) : (
-            <h1>Hello {NAME}!</h1>
-          )}
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <DropdownButton variant="secondary" id="dropdown-breeds" title={selectedBreed}>
+<Container className="homepage-container">
+  <NavigationBar />
+  
+    {/* Greeting Message (Hello {NAME}) */}
+    <Row style={{ marginBottom: "20px" }}>
+      <Col>
+        {NAME === "" || NAME === null ? (
+          <h1>
+            You've been logged out already, please press the logout button.
+          </h1>
+        ) : (
+          <h1>Hello {NAME}!</h1>
+        )}
+      </Col>
+    </Row>
+
+    {/* Filtering and Page Info (Centered) */}
+    <Row style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "20px" }}>
+        <Col xs={10} sm={8} md={6} style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          {/* Breed Selection Dropdown */}
+          {/* <DropdownButton title={selectedBreed} className="custom-dropdown">
             {breeds.map((breed) => (
-              <Dropdown.Item
-                key={breed}
-                as="div"
-                onClick={() => handleBreedChange(breed)}
-              >
+              <Dropdown.Item key={breed} as="div" onClick={() => handleBreedChange(breed)}>
                 {breed}
               </Dropdown.Item>
             ))}
-          </DropdownButton>
-        </Col>
-        <Col>
-        Page {currentPage} of {totalPages}
-        </Col>
-        {/* Sorting */}
-        <Col>
-          <select value={sort} onChange={(e) => setSort(e.target.value)}>
-            <option value="breed:asc">Breed (A-Z)</option>
-            <option value="breed:desc">Breed (Z-A)</option>
-            {/* <option value="name:asc">Name (A-Z)</option>
-            <option value="name:desc">Name (Z-A)</option>
-            <option value="age:asc">Age (Youngest First)</option>
-            <option value="age:desc">Age (Oldest First)</option> */}
-          </select>
+          </DropdownButton> */}
+          <Dropdown>
+            <Dropdown.Toggle
+              variant="light"  // Use 'light' so that we can override with custom styles
+              id="dropdown-breeds"
+              className="custom-dropdown"
+            >
+              {selectedBreed}
+            </Dropdown.Toggle>
+
+            <Dropdown.Menu>
+              {breeds.map((breed) => (
+                <Dropdown.Item
+                  key={breed}
+                  as="div"
+                  onClick={() => handleBreedChange(breed)}
+                >
+                  {breed}
+                </Dropdown.Item>
+              ))}
+            </Dropdown.Menu>
+          </Dropdown>
+          {/* Page # of total Pages */}
+          <span style={{ fontSize: "20px", padding: "0 15px" }}>
+            Page {currentPage} of {totalPages}
+          </span>
+          
+          {/* Sorting Dropdown */}
+          {/* <DropdownButton
+            id="dropdown-sort"
+            title={sort === "breed:asc" ? "Breed (A-Z)" : "Breed (Z-A)"}
+            style={{ width: "auto", backgroundColor: "#F8A619", borderColor: "#F8A619", color: "white"}}
+          >
+            <Dropdown.Item onClick={() => setSort("breed:asc")}>
+              Breed (A-Z)
+            </Dropdown.Item>
+            <Dropdown.Item onClick={() => setSort("breed:desc")}>
+              Breed (Z-A)
+            </Dropdown.Item>
+          </DropdownButton> */}
+          <Dropdown>
+            <Dropdown.Toggle
+              id="dropdown-sort"
+              title={sort === "breed:asc" ? "Breed (A-Z)" : "Breed (Z-A)"}
+              style={{
+                width: "auto",
+                backgroundColor: "#F8A619",
+                borderColor: "#F8A619",
+                color: "white",
+              }}
+            >
+              {sort === "breed:asc" ? "Breed (A-Z)" : "Breed (Z-A)"}
+            </Dropdown.Toggle>
+
+            <Dropdown.Menu>
+              <Dropdown.Item onClick={() => setSort("breed:asc")}>
+                Breed (A-Z)
+              </Dropdown.Item>
+              <Dropdown.Item onClick={() => setSort("breed:desc")}>
+                Breed (Z-A)
+              </Dropdown.Item>
+            </Dropdown.Menu>
+        </Dropdown>
         </Col>
       </Row>
+    {/* Display Results */}
+    <Row style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))", gap: "20px" }}>
+      {dogs.map((dog) => (
+        <Col xs={12} sm={6} md={4} key={dog.id}>
+          <DogCard
+            id={dog.id}
+            name={dog.name}
+            age={dog.age}
+            breed={dog.breed}
+            image={dog.img}
+            zip_code={dog.zip_code}
+            city={locations[dog.zip_code] ? locations[dog.zip_code].city : "Unknown"}
+            county={locations[dog.zip_code] ? locations[dog.zip_code].county : "Unknown"}
+            state={locations[dog.zip_code] ? locations[dog.zip_code].state : "Unknown"}
+          />
+        </Col>
+      ))}
+    </Row>
 
-      {/* Zip Code Input */}
-      {/* <label>Zip Code:</label>
-      <input
-        type="text"
-        value={zipCodes}
-        onChange={(e) => setZipCodes(e.target.value)}
-      /> */}
+    {/* Pagination Controls */}
+    <Row>
+      <Pagination className="justify-content-center mt-3">
+        <Pagination.Prev onClick={() => goToPage(currentPage - 1, "prev")} disabled={currentPage === 1}>
+          Prev
+        </Pagination.Prev>
+        <Pagination.Item active >{currentPage}</Pagination.Item>
+        <Pagination.Next onClick={() => goToPage(currentPage + 1, "next")} disabled={currentPage === totalPages}>
+          Next
+        </Pagination.Next>
+      </Pagination>
+    </Row>
+  </Container>
 
-      {/* Age Min/Max */}
-      {/* <label>Age Range:</label>
-      <input
-        type="number"
-        value={ageMin}
-        onChange={(e) => setAgeMin(e.target.value)}
-        placeholder="Min Age"
-      />
-      <input
-        type="number"
-        value={ageMax}
-        onChange={(e) => setAgeMax(e.target.value)}
-        placeholder="Max Age"
-      /> */}
-
-      {/* Page Size */}
-      {/* <label>Results per Page:</label>
-      <input
-        type="number"
-        value={size}
-        onChange={(e) => setSize(e.target.value)}
-      /> */}
-
-      {/* Display Results */}
-      {/* <h3>Search Results:</h3> */}
-      <Row>
-        {dogs.map((dog) => (
-          <Col xs={12} sm={6} md={4} key={dog.id}>
-            {/* {console.log("locations:",locations)} */}
-            <DogCard
-              id={dog.id}
-              name={dog.name}
-              age={dog.age}
-              breed={dog.breed}
-              image={dog.img}
-              zip_code={dog.zip_code}
-              city={locations[dog.zip_code] ? locations[dog.zip_code].city : "Unknown"}
-              county={locations[dog.zip_code] ? locations[dog.zip_code].county : "Unknown"}
-              state={locations[dog.zip_code] ? locations[dog.zip_code].state : "Unknown"}
-              />
-          </Col>
-        ))}
-      </Row>
-      <Row>
-        {/* Pagination Controls */}
-        <Pagination className="justify-content-center mt-3">
-          {/* <Pagination.First onClick={() => goToPage(1)} disabled={currentPage === 1}>First</Pagination.First> */}
-          <Pagination.Prev onClick={() => goToPage(currentPage - 1, "prev")} disabled={currentPage === 1}>Prev</Pagination.Prev>
-          <Pagination.Item active>{currentPage}</Pagination.Item>
-          <Pagination.Next onClick={() => goToPage(currentPage + 1, "next")} disabled={currentPage === totalPages}>Next</Pagination.Next>
-          {/* <Pagination.Last onClick={() => goToPage(totalPages)} disabled={currentPage === totalPages}>Last</Pagination.Last> */}
-        </Pagination>
-      </Row>
-
-    </Container>
   );
 }
