@@ -1,6 +1,6 @@
 "use client";
 // Import Bootstrap dynamically to prevent SSR issues
-const BootstrapStyles = dynamic(() => import("bootstrap/dist/css/bootstrap.min.css"), { ssr: false });
+import("bootstrap/dist/css/bootstrap.min.css")
 import { useEffect, useState } from "react";
 
 import { Button, Col, Container, Row } from 'react-bootstrap';
@@ -46,7 +46,7 @@ export default function Favorites() {
 
   return (
     <div style={{ padding: "20px" }}>
-      <BootstrapStyles/>
+      {/* <BootstrapStyles/> */}
       <NavigationBar />
       <h1 style={{ textAlign: "center" }}>Favorites</h1>
 

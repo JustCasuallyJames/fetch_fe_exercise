@@ -1,6 +1,6 @@
 "use client";
 // Import Bootstrap dynamically to prevent SSR issues
-const BootstrapStyles = dynamic(() => import("bootstrap/dist/css/bootstrap.min.css"), { ssr: false });
+import("bootstrap/dist/css/bootstrap.min.css")
 
 import { useEffect, useMemo, useState } from "react";
 
@@ -191,7 +191,7 @@ export default function Homepage() {
   
   return (
 <Container className="homepage-container">
-  <BootstrapStyles/>
+  {/* <BootstrapStyles/> */}
   <NavigationBar />
   
     {/* Greeting Message (Hello {NAME}) */}
