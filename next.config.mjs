@@ -7,9 +7,6 @@ const nextConfig = {
     // Ensures all URLs have trailing slashes for better routing in static export
     exportTrailingSlash: true,
   
-    // Output folder for exported static files
-    distDir: 'build',
-  
     // Optional: If you're using any environment variables for production, make sure to set them here
     env: {
       CUSTOM_ENV: process.env.CUSTOM_ENV || 'default_value',
