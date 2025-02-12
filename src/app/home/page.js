@@ -18,7 +18,10 @@ import DogCard from "@/app/components/Card";
 import NavigationBar from "../components/NavigationBar";
 
 export default function Homepage() {
-  const NAME = window.localStorage.getItem("name"); // Get name from local storage
+  const [NAME, setNAME] = useState('');
+  useEffect(() => {
+    setNAME(window.localStorage.getItem("name")); // Get name from local storage
+  }, [])
   const URL = "https://frontend-take-home-service.fetch.com";
   const router = useRouter();
 
