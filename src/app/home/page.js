@@ -10,6 +10,7 @@ import {
   Dropdown,
   DropdownButton,
   FormCheck,
+  Pagination
 } from "react-bootstrap";
 import { useRouter } from "next/navigation";
 
@@ -18,19 +19,68 @@ import DogCard from "@/app/components/Card";
 export default function Homepage() {
   const NAME = localStorage.getItem("name"); // Get name from local storage
   const URL = "https://frontend-take-home-service.fetch.com";
+  const router = useRouter();
 
   const [breeds, setBreeds] = useState([]);
   const [dogs, setDogs] = useState([]);
 
   // filtering
-  const [selectedBreeds, setSelectedBreeds] = useState([]); // User selected breeds
+  const [selectedBreed, setSelectedBreed] = useState("Select a breed"); // User selected breeds
   const [zipCodes, setZipCodes] = useState([]);
   const [ageMin, setAgeMin] = useState("");
   const [ageMax, setAgeMax] = useState("");
-  const [size, setSize] = useState(25);
+  const [size, setSize] = useState(9); // Breeds per page
   const [sort, setSort] = useState("breed:asc"); // breed:asc | breed:desc or name:asc | name:desc or age:asc | age:desc
 
-  const router = useRouter();
+  // pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const [next, setNext] = useState("");
+  const [prev, setPrev] = useState("");
+  const [totalSize, setTotalSize] = useState(10000);
+  const totalPages = Math.ceil(totalSize / size);
+
+  // Get breeds for the current page
+  // const indexOfLastBreed = currentPage * size;
+  // const indexOfFirstBreed = indexOfLastBreed - size;
+  // const currentBreeds = breeds.slice(indexOfFirstBreed, indexOfLastBreed);
+
+  // Handle page changes
+  const goToPage = async (page, toggle="") => {
+    if (page >= 1 && page <= totalPages) {
+      console.log("totalPages", totalPages)
+      setCurrentPage(page);
+      let fetchURL = `${URL}`
+      if(toggle === 'next') fetchURL += next;
+      else if (toggle === 'prev') fetchURL += prev;
+
+      const response = await fetch(`${fetchURL}`, {
+        // response to get dog search results
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
+
+      const data = await response.json();
+      if(data.prev) setPrev(data.prev);
+      setNext(data.next);
+      let dogIds = data.resultIds;
+
+      const response1 = await fetch(`${URL}/dogs`, {
+        // response to get the array of dogs
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(dogIds),
+        credentials: "include",
+      });
+      const response1data = await response1.json();
+      setDogs(response1data); // array of dog objects
+    }
+  };
+
   const handleLogout = async () => {
     if (localStorage.getItem("name")) {
       // if there is a name to be removed
@@ -57,9 +107,7 @@ export default function Homepage() {
   };
 
   const handleBreedChange = (data) => {
-    setSelectedBreeds((prev) =>
-      prev.includes(data) ? prev.filter((b) => b !== data) : [...prev, data]
-    );
+    setSelectedBreed(data);
   };
 
   useEffect(() => { //fetch the dog breeds
@@ -72,25 +120,24 @@ export default function Homepage() {
         // put a message to the user saying that they have to relog in because there is no valid cookie
       }
       const data = await response.json();
+      data.unshift("All Breeds");
       setBreeds(data);
     };
-
     fetchBreeds();
   }, []);
-
+  
   // Fetch dogs based on filters
   useEffect(() => {
     const fetchDogs = async () => {
       const params = new URLSearchParams();
-
-      if (selectedBreeds.length > 0)
-        selectedBreeds.forEach((breed) => params.append("breeds", breed)); // this puts repeated query parameters for breeds
+      //filters
+      if (selectedBreed != 'Select a breed' && selectedBreed != 'All Breeds') params.append("breeds", selectedBreed);
+      // else if (selectedBreed === 'All Breeds') breeds.forEach((breed) => params.append("breeds", breed));
       if (zipCodes > 0) params.append("zipCodes", zipCodes.join(","));
       if (ageMin) params.append("ageMin", ageMin);
       if (ageMax) params.append("ageMax", ageMax);
       params.append("size", size);
       params.append("sort", sort);
-
       const response = await fetch(`${URL}/dogs/search?${params.toString()}`, {
         // response to get dog search results
         method: "GET",
@@ -101,6 +148,10 @@ export default function Homepage() {
       });
 
       const data = await response.json();
+      if(data.prev) setPrev(data.prev);
+      setNext(data.next);
+      setTotalSize(data.total);
+      setCurrentPage(1); // reset the current page count when you change the breed filter
       let dogIds = data.resultIds;
 
       const response1 = await fetch(`${URL}/dogs`, {
@@ -117,91 +168,11 @@ export default function Homepage() {
     };
 
     fetchDogs();
-  }, [selectedBreeds, zipCodes, ageMin, ageMax, size, sort]); // Runs when filters change
+  }, [selectedBreed, zipCodes, ageMin, ageMax, size, sort]); // Runs when filters change
 
   return (
     <Container>
-      <DropdownButton
-        variant="secondary"
-        id="dropdown-breeds"
-        title="Select Breeds"
-      >
-        {breeds.map((breed) => (
-          <Dropdown.Item
-            key={breed}
-            as="div"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <FormCheck
-              type="checkbox"
-              label={breed}
-              checked={selectedBreeds.includes(breed)}
-              onChange={() => handleBreedChange(breed)}
-            />
-          </Dropdown.Item>
-        ))}
-      </DropdownButton>
-      {/* Breed Filter */}
-      <label>Breed:</label>
-
-      {/* Zip Code Input */}
-      <label>Zip Code:</label>
-      <input
-        type="text"
-        value={zipCodes}
-        onChange={(e) => setZipCodes(e.target.value)}
-      />
-
-      {/* Age Min/Max */}
-      <label>Age Range:</label>
-      <input
-        type="number"
-        value={ageMin}
-        onChange={(e) => setAgeMin(e.target.value)}
-        placeholder="Min Age"
-      />
-      <input
-        type="number"
-        value={ageMax}
-        onChange={(e) => setAgeMax(e.target.value)}
-        placeholder="Max Age"
-      />
-
-      {/* Page Size */}
-      <label>Results per Page:</label>
-      <input
-        type="number"
-        value={size}
-        onChange={(e) => setSize(e.target.value)}
-      />
-
-      {/* Sorting */}
-      <label>Sort By:</label>
-      <select value={sort} onChange={(e) => setSort(e.target.value)}>
-        <option value="breed:asc">Breed (A-Z)</option>
-        <option value="breed:desc">Breed (Z-A)</option>
-        <option value="name:asc">Name (A-Z)</option>
-        <option value="name:desc">Name (Z-A)</option>
-        <option value="age:asc">Age (Youngest First)</option>
-        <option value="age:desc">Age (Oldest First)</option>
-      </select>
-
-      {/* Display Results */}
-      <h3>Search Results:</h3>
-      <Row>
-        {dogs.map((dog) => (
-          <Col xs={12} sm={6} md={4} key={dog.id}>
-            <DogCard
-              name={dog.name}
-              age={dog.age}
-              breed={dog.breed}
-              image={dog.img}
-              zip_code={dog.zip_code}
-            />
-          </Col>
-        ))}
-      </Row>
-      {/* <Row>{breeds.join(", ")}</Row> */}
+      {/* Breed Selection */}
       <Row>
         <Col>
           {NAME === "" || NAME === null ? (
@@ -216,6 +187,93 @@ export default function Homepage() {
           <Button onClick={handleLogout}> Logout </Button>
         </Col>
       </Row>
+      <Row>
+        <Col>
+          <DropdownButton variant="secondary" id="dropdown-breeds" title={selectedBreed}>
+            {breeds.map((breed) => (
+              <Dropdown.Item
+                key={breed}
+                as="div"
+                onClick={() => handleBreedChange(breed)}
+              >
+                {breed}
+              </Dropdown.Item>
+            ))}
+          </DropdownButton>
+        </Col>
+        <Col>
+        Page {currentPage} of {totalPages}
+        </Col>
+        {/* Sorting */}
+        <Col>
+          <select value={sort} onChange={(e) => setSort(e.target.value)}>
+            <option value="breed:asc">Breed (A-Z)</option>
+            <option value="breed:desc">Breed (Z-A)</option>
+            {/* <option value="name:asc">Name (A-Z)</option>
+            <option value="name:desc">Name (Z-A)</option>
+            <option value="age:asc">Age (Youngest First)</option>
+            <option value="age:desc">Age (Oldest First)</option> */}
+          </select>
+        </Col>
+      </Row>
+
+      {/* Zip Code Input */}
+      {/* <label>Zip Code:</label>
+      <input
+        type="text"
+        value={zipCodes}
+        onChange={(e) => setZipCodes(e.target.value)}
+      /> */}
+
+      {/* Age Min/Max */}
+      {/* <label>Age Range:</label>
+      <input
+        type="number"
+        value={ageMin}
+        onChange={(e) => setAgeMin(e.target.value)}
+        placeholder="Min Age"
+      />
+      <input
+        type="number"
+        value={ageMax}
+        onChange={(e) => setAgeMax(e.target.value)}
+        placeholder="Max Age"
+      /> */}
+
+      {/* Page Size */}
+      {/* <label>Results per Page:</label>
+      <input
+        type="number"
+        value={size}
+        onChange={(e) => setSize(e.target.value)}
+      /> */}
+
+      {/* Display Results */}
+      {/* <h3>Search Results:</h3> */}
+      <Row>
+        {dogs.map((dog) => (
+          <Col xs={12} sm={6} md={4} key={dog.id}>
+            <DogCard
+              name={dog.name}
+              age={dog.age}
+              breed={dog.breed}
+              image={dog.img}
+              zip_code={dog.zip_code}
+            />
+          </Col>
+        ))}
+      </Row>
+      <Row>
+        {/* Pagination Controls */}
+        <Pagination className="justify-content-center mt-3">
+          {/* <Pagination.First onClick={() => goToPage(1)} disabled={currentPage === 1}>First</Pagination.First> */}
+          <Pagination.Prev onClick={() => goToPage(currentPage - 1, "prev")} disabled={currentPage === 1}>Prev</Pagination.Prev>
+          <Pagination.Item active>{currentPage}</Pagination.Item>
+          <Pagination.Next onClick={() => goToPage(currentPage + 1, "next")} disabled={currentPage === totalPages}>Next</Pagination.Next>
+          {/* <Pagination.Last onClick={() => goToPage(totalPages)} disabled={currentPage === totalPages}>Last</Pagination.Last> */}
+        </Pagination>
+      </Row>
+
     </Container>
   );
 }
