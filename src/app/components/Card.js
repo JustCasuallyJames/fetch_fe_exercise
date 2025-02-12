@@ -1,30 +1,42 @@
-'use client';
+"use client";
 import { Button, Card } from 'react-bootstrap';
 
 import { useEffect, useState } from 'react';
 export default function DogCard({id, name, age, breed, image, zip_code, city, county, state, matchToggle}) {
   const [isFavorite, setIsFavorite] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+  
+  useEffect(() => {
+    setIsClient(true);
+  },[]);
 
   useEffect(() => {
-    const storedFavorites = JSON.parse(window.localStorage.getItem("favorites")) || [];
+    if(typeof window === 'undefined') return;
+
+    const storedFavorites = JSON.parse(localStorage.getItem("favorites")) || [];
     setIsFavorite(storedFavorites.some((dog) => dog.id === id));
-  }, [id]);
+    
+  }, [id, isClient]);
 
   // Function to add/remove favorites
   const toggleFavorite = () => {
-    let storedFavorites = JSON.parse(localStorage.getItem("favorites")) || [];
+    if(typeof window === 'undefined') return;
 
-    if (isFavorite) {
-      // Remove from favorites
-      storedFavorites = storedFavorites.filter((dog) => dog.id !== id);
-    } else {
-      // Add to favorites
-      storedFavorites.push({ id, name, breed, image, zip_code, city, county, state });
+    if(typeof window !== 'undefined') {
+      let storedFavorites = JSON.parse(localStorage.getItem("favorites")) || [];
+      if (isFavorite) {
+        // Remove from favorites
+        storedFavorites = storedFavorites.filter((dog) => dog.id !== id);
+      } else {
+        // Add to favorites
+        storedFavorites.push({ id, name, breed, image, zip_code, city, county, state });
+      }
+  
+      // Update localStorage and state
+      localStorage.setItem("favorites", JSON.stringify(storedFavorites));
+      setIsFavorite(!isFavorite);
     }
 
-    // Update localStorage and state
-    window.localStorage.setItem("favorites", JSON.stringify(storedFavorites));
-    setIsFavorite(!isFavorite);
   };
   return (
     <Card style={{ width: '18rem' }}>
