@@ -1,3 +1,4 @@
+'use client';
 import { Button, Card } from 'react-bootstrap';
 
 import { useEffect, useState } from 'react';
