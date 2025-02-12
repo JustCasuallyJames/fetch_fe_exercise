@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Alert, Button, Container, Form } from 'react-bootstrap';
+import { Alert, Button, Container, Form, Image } from 'react-bootstrap';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -72,6 +72,7 @@ export default function Login() {
           backgroundColor: '#fff',
         }}
       >
+        <Image src="/fetch_logo.svg" alt="fetch logo svg" style={{ paddingBottom: "1.5rem" }}/>
         {error && <Alert variant="danger">{error}</Alert>}
 
         <Form onSubmit={handleSubmit}>

@@ -42,7 +42,7 @@ export default function NavigationBar() {
   return (
     <Navbar expand="lg" className="">
       <Container className="navbar-container">
-        {/* <Navbar.Brand href="/home" className="fw-bold">Dog Finder</Navbar.Brand> */}
+        {/* <Navbar.Brand className="mx-auto fw-bold">Dog Finder</Navbar.Brand> */}
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="w-100 d-flex">
