@@ -15,6 +15,7 @@ import {
 import { useRouter } from "next/navigation";
 
 import DogCard from "@/app/components/Card";
+import NavigationBar from "../components/NavigationBar";
 
 export default function Homepage() {
   const NAME = localStorage.getItem("name"); // Get name from local storage
@@ -199,43 +200,40 @@ export default function Homepage() {
   }, [dogs]); 
   
   return (
-    <Container>
+    <Container className="homepage-container">
+      <NavigationBar/>
       {/* Breed Selection */}
-      <Row>
+      <Row className="">
         <Col>
           {NAME === "" || NAME === null ? (
-            <h1 className="logout-message">
+            <h1>
               You've been logged out already, please press the logout button.
             </h1>
           ) : (
-            <h1 className="welcome-message">Hello {NAME}!</h1>
+            <h1>Hello {NAME}!</h1>
           )}
         </Col>
-        <Col>
-          <Button onClick={handleLogout} className="logout-button"> Logout </Button>
-        </Col>
       </Row>
-      <Row className="filter-row">
+      <Row>
         <Col>
-          <DropdownButton variant="secondary" id="dropdown-breeds" title={selectedBreed} className="breed-dropdown">
+          <DropdownButton variant="secondary" id="dropdown-breeds" title={selectedBreed}>
             {breeds.map((breed) => (
               <Dropdown.Item
                 key={breed}
                 as="div"
                 onClick={() => handleBreedChange(breed)}
-                className="dropdown-item"
               >
                 {breed}
               </Dropdown.Item>
             ))}
           </DropdownButton>
         </Col>
-        <Col className="pagination-info">
+        <Col>
         Page {currentPage} of {totalPages}
         </Col>
         {/* Sorting */}
         <Col>
-          <select value={sort} onChange={(e) => setSort(e.target.value)} className="sort-select">
+          <select value={sort} onChange={(e) => setSort(e.target.value)}>
             <option value="breed:asc">Breed (A-Z)</option>
             <option value="breed:desc">Breed (Z-A)</option>
             {/* <option value="name:asc">Name (A-Z)</option>
@@ -279,11 +277,12 @@ export default function Homepage() {
 
       {/* Display Results */}
       {/* <h3>Search Results:</h3> */}
-      <Row className="results-row">
+      <Row>
         {dogs.map((dog) => (
-          <Col xs={12} sm={6} md={4} key={dog.id} className="dog-card-container">
+          <Col xs={12} sm={6} md={4} key={dog.id}>
             {/* {console.log("locations:",locations)} */}
             <DogCard
+              id={dog.id}
               name={dog.name}
               age={dog.age}
               breed={dog.breed}
@@ -298,11 +297,11 @@ export default function Homepage() {
       </Row>
       <Row>
         {/* Pagination Controls */}
-        <Pagination className="pagination-controls justify-content-center mt-3">
+        <Pagination className="justify-content-center mt-3">
           {/* <Pagination.First onClick={() => goToPage(1)} disabled={currentPage === 1}>First</Pagination.First> */}
-          <Pagination.Prev onClick={() => goToPage(currentPage - 1, "prev")} disabled={currentPage === 1} className="pagination-prev">Prev</Pagination.Prev>
-          <Pagination.Item active className="pagination-current">{currentPage}</Pagination.Item>
-          <Pagination.Next onClick={() => goToPage(currentPage + 1, "next")} disabled={currentPage === totalPages} className="pagination-next">Next</Pagination.Next>
+          <Pagination.Prev onClick={() => goToPage(currentPage - 1, "prev")} disabled={currentPage === 1}>Prev</Pagination.Prev>
+          <Pagination.Item active>{currentPage}</Pagination.Item>
+          <Pagination.Next onClick={() => goToPage(currentPage + 1, "next")} disabled={currentPage === totalPages}>Next</Pagination.Next>
           {/* <Pagination.Last onClick={() => goToPage(totalPages)} disabled={currentPage === totalPages}>Last</Pagination.Last> */}
         </Pagination>
       </Row>

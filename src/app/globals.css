@@ -14,11 +14,11 @@
   }
 }
 
-/* body {
+body {
   color: var(--foreground);
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
-} */
+}
 
 .dog-card-image {
   max-width: 100%; 
@@ -27,104 +27,19 @@
   object-fit: cover; 
 }
 
-/* General Styles */
-body {
-  background-color: #f8f9fa;
-  font-family: Arial, sans-serif;
-  margin: 0;
+.navbar-container {
+  padding: 0 !important;
+}
+
+.homepage-container {
   padding: 0;
 }
 
-/* Container Styling */
-.container {
-  padding: 20px;
+.navbar-links {
+  padding-left: 0 !important;
+  font-size: 20px !important;
 }
 
-/* Header Section */
-h1 {
-  color: #343a40;
-  font-weight: bold;
-}
-
-/* Logout Button */
-button.logout-btn {
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-button.logout-btn:hover {
-  background-color: #c82333;
-}
-
-/* Dropdown Styling */
-.dropdown-button {
-  width: 100%;
-}
-
-/* Sorting Select Box */
-select {
-  padding: 5px;
-  border-radius: 5px;
-  border: 1px solid #ced4da;
-}
-
-/* Dog Card Grid */
-.row {
-  margin-top: 20px;
-}
-
-.col {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-/* Dog Card Styling */
-.card {
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  transition: transform 0.3s;
-}
-
-.card:hover {
-  transform: translateY(-5px);
-}
-
-.card img {
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
-  object-fit: cover;
-}
-
-.card-body {
-  text-align: center;
-  background-color: white;
-}
-
-/* Pagination Styling */
-.pagination {
-  display: flex;
-  justify-content: center;
-  padding: 10px;
-}
-
-.pagination .page-item.active .page-link {
-  background-color: #007bff;
-  border-color: #007bff;
-  color: white;
-}
-
-.pagination .page-link {
-  color: #007bff;
-}
-
-.pagination .page-link:hover {
-  background-color: #e9ecef;
+.dog-finder-title {
+  font: bold 20px;
 }
